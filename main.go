@@ -15,6 +15,9 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
+	// Initialze the database
+	loadDatabase()
+
 	opts := []bot.Option{
 		bot.WithDefaultHandler(handler),
 	}
