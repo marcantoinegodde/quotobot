@@ -20,7 +20,7 @@ type Vote struct {
 	QuoteID  uint
 }
 
-func loadDatabase() {
+func loadDatabase() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -32,4 +32,6 @@ func loadDatabase() {
 	}
 
 	log.Println("Database loaded successfully")
+
+	return db
 }
