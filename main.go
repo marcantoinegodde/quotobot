@@ -14,20 +14,19 @@ import (
 )
 
 type QuotoBot struct {
+	Config   *Config
 	Database *gorm.DB
 }
 
 func NewQuotoBot() *QuotoBot {
+	c := loadConfig()
 	db := loadDatabase()
 
 	return &QuotoBot{
+		Config:   c,
 		Database: db,
 	}
 }
-
-const (
-	CHAT_ID = 123456789
-)
 
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -39,7 +38,7 @@ func main() {
 		bot.WithDefaultHandler(qb.defaultHandler),
 	}
 
-	b, err := bot.New(os.Getenv("TOKEN"), opts...)
+	b, err := bot.New(qb.Config.Token, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +49,7 @@ func main() {
 }
 
 func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	if update.Message.Chat.ID == CHAT_ID {
+	if update.Message.Chat.ID == qb.Config.ChatID {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Arrête de faire chier les autres et viens me voir en privé",
