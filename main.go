@@ -36,7 +36,7 @@ func main() {
 	qb := NewQuotoBot()
 
 	opts := []bot.Option{
-		bot.WithDefaultHandler(defaultHandler),
+		bot.WithDefaultHandler(qb.defaultHandler),
 	}
 
 	b, err := bot.New(os.Getenv("TOKEN"), opts...)
@@ -53,7 +53,7 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 	if update.Message.Chat.ID == CHAT_ID {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
-			Text:   "Arrete de faire chier les autres et viens me voir en privé",
+			Text:   "Arrête de faire chier les autres et viens me voir en privé",
 		})
 
 		return
@@ -70,9 +70,9 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 	}
 
 	content := strings.TrimSpace(command[1])
-	header := strings.TrimSpace(command[3])
+	author := strings.TrimSpace(command[3])
 
-	if content == "" || header == "" {
+	if content == "" || author == "" {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
@@ -82,8 +82,8 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 	}
 
 	quote := Quote{
-		Header:  header,
 		Content: content,
+		Author:  author,
 	}
 	if err := qb.Database.Create(&quote).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
@@ -96,14 +96,15 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:    update.Message.Chat.ID,
-		Text:      fmt.Sprintf("Voici la citation ajoutée :\n\n*%s*\n\n_by %s_", bot.EscapeMarkdown(quote.Content), bot.EscapeMarkdown(quote.Header)),
+		Text:      fmt.Sprintf("Voici la citation ajoutée :\n\n*%s*\n\n_by %s_", bot.EscapeMarkdown(quote.Content), bot.EscapeMarkdown(quote.Author)),
 		ParseMode: models.ParseModeMarkdown,
 	})
 
 	log.Println("Quote ajoutée par", update.Message.From.Username)
 }
 
-func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func (qb *QuotoBot) defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	// Ignore message edits, necessary to avoid panics
 	if update.Message == nil {
 		return
 	}

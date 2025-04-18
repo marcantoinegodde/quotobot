@@ -9,8 +9,8 @@ import (
 
 type Quote struct {
 	gorm.Model
-	Header  string
 	Content string
+	Author  string
 	Votes   []Vote
 }
 
