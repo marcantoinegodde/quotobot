@@ -45,6 +45,7 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeMessageText, "random", bot.MatchTypeCommandStartOnly, qb.randomHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "search", bot.MatchTypeCommandStartOnly, qb.searchHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "vote", bot.MatchTypeCommandStartOnly, qb.voteHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "unvote", bot.MatchTypeCommandStartOnly, qb.unvoteHandler)
 
 	b.Start(ctx)
 }
