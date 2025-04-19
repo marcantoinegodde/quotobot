@@ -54,7 +54,7 @@ func (qb *QuotoBot) searchHandler(ctx context.Context, b *bot.Bot, update *model
 	}
 
 	var quotes []Quote
-	if err := qb.Database.Where("content LIKE ?", "%"+search+"%").Or("author LIKE ?", "%"+search+"%").Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
+	if err := qb.Database.Model(&Quote{}).Preload("Votes").Where("content LIKE ?", "%"+search+"%").Or("author LIKE ?", "%"+search+"%").Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la récupération des citations",

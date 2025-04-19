@@ -34,7 +34,7 @@ func (qb *QuotoBot) randomHandler(ctx context.Context, b *bot.Bot, update *model
 	}
 
 	var quotes []Quote
-	if err := qb.Database.Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
+	if err := qb.Database.Model(&Quote{}).Preload("Votes").Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la récupération des citations",
