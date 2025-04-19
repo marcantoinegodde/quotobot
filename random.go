@@ -67,5 +67,5 @@ func (qb *QuotoBot) randomHandler(ctx context.Context, b *bot.Bot, update *model
 		ParseMode: models.ParseModeMarkdown,
 	})
 
-	log.Printf("%d quotes envoyées à %s\n", len(quotes), update.Message.From.Username)
+	log.Printf("%d quote(s) envoyée(s) à %s\n", len(quotes), update.Message.From.Username)
 }
