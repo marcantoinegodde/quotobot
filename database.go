@@ -16,7 +16,7 @@ type Quote struct {
 
 type Vote struct {
 	gorm.Model
-	PersonID int
+	PersonID int64
 	QuoteID  uint
 }
 
