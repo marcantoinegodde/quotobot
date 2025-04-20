@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"strconv"
 	"strings"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
+	"gorm.io/gorm"
 )
 
 func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -32,31 +34,39 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 		return
 	}
 
-	var count int64
-	if err := qb.Database.Model(&Vote{}).Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Count(&count).Error; err != nil {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "Erreur de base de données",
-		})
-		log.Printf("Erreur de base de données : %v", err)
+	if err := qb.Database.Where("id = ?", qid).First(&Quote{}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Citation introuvable",
+			})
+			log.Printf("Citation introuvable de %s", update.Message.From.Username)
+		} else {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Erreur de base de données",
+			})
+			log.Printf("Erreur de base de données : %v", err)
+		}
 		return
 	}
 
-	if count == 0 {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "T'as pas encore voté pour cette citation crétin !",
-		})
-		log.Printf("Vote déjà enregistré de %s", update.Message.From.Username)
-		return
-	}
-
-	if err := qb.Database.Model(&Vote{}).Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Delete(&Vote{}).Error; err != nil {
+	query := qb.Database.Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Delete(&Vote{})
+	if err := query.Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la suppression du vote",
 		})
 		log.Printf("Erreur lors de la suppression du vote de %s", update.Message.From.Username)
+		return
+	}
+
+	if query.RowsAffected == 0 {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "T'as pas encore voté pour cette citation crétin !",
+		})
+		log.Printf("Vote introuvable de %s", update.Message.From.Username)
 		return
 	}
 

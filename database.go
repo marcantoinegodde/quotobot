@@ -16,12 +16,12 @@ type Quote struct {
 
 type Vote struct {
 	gorm.Model
-	PersonID int64
-	QuoteID  uint
+	PersonID int64 `gorm:"uniqueIndex:udx_person_quote,WHERE:deleted_at IS NULL"`
+	QuoteID  uint  `gorm:"uniqueIndex:udx_person_quote,WHERE:deleted_at IS NULL"`
 }
 
 func loadDatabase() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{TranslateError: true})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}

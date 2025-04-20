@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"strconv"
 	"strings"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
+	"gorm.io/gorm"
 )
 
 func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -32,22 +34,20 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 		return
 	}
 
-	var count int64
-	if err := qb.Database.Model(&Vote{}).Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Count(&count).Error; err != nil {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "Erreur de base de données",
-		})
-		log.Printf("Erreur de base de données : %v", err)
-		return
-	}
-
-	if count > 0 {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "T'as déjà voté crétin !",
-		})
-		log.Printf("Vote déjà enregistré de %s", update.Message.From.Username)
+	if err := qb.Database.Where("id = ?", qid).First(&Quote{}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Citation introuvable",
+			})
+			log.Printf("Citation introuvable de %s", update.Message.From.Username)
+		} else {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Erreur de base de données",
+			})
+			log.Printf("Erreur de base de données : %v", err)
+		}
 		return
 	}
 
@@ -57,11 +57,19 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 	}
 
 	if err := qb.Database.Create(&vote).Error; err != nil {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "Erreur de base de données",
-		})
-		log.Printf("Erreur de base de données : %v", err)
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "T'as déjà voté crétin !",
+			})
+			log.Printf("Vote déjà enregistré de %s", update.Message.From.Username)
+		} else {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Erreur de base de données",
+			})
+			log.Printf("Erreur de base de données : %v", err)
+		}
 		return
 	}
 
