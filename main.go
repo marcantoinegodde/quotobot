@@ -47,6 +47,7 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeMessageText, "vote", bot.MatchTypeCommandStartOnly, qb.voteHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "unvote", bot.MatchTypeCommandStartOnly, qb.unvoteHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "score", bot.MatchTypeCommandStartOnly, qb.scoreHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "top", bot.MatchTypeCommandStartOnly, qb.topHandler)
 
 	b.Start(ctx)
 }
