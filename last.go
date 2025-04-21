@@ -47,7 +47,7 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 			ChatID: update.Message.Chat.ID,
 			Text:   "Aucune citation trouvée",
 		})
-		qb.Logger.Info.Printf("Aucune citation trouvée pour %s\n", update.Message.From.Username)
+		qb.Logger.Info.Printf("Aucune citation trouvée pour %s", update.Message.From.Username)
 		return
 	}
 
@@ -67,5 +67,5 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 		ParseMode: models.ParseModeMarkdown,
 	})
 
-	qb.Logger.Info.Printf("%d quote(s) envoyée(s) à %s\n", len(quotes), update.Message.From.Username)
+	qb.Logger.Info.Printf("%d quote(s) envoyée(s) à %s", len(quotes), update.Message.From.Username)
 }

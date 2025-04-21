@@ -72,5 +72,5 @@ func (qb *QuotoBot) topHandler(ctx context.Context, b *bot.Bot, update *models.U
 		ParseMode: models.ParseModeMarkdown,
 	})
 
-	qb.Logger.Info.Printf("%d quote(s) envoyée(s) à %s\n", len(quotes), update.Message.From.Username)
+	qb.Logger.Info.Printf("%d quote(s) envoyée(s) à %s", len(quotes), update.Message.From.Username)
 }

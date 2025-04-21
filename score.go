@@ -47,5 +47,5 @@ func (qb *QuotoBot) scoreHandler(ctx context.Context, b *bot.Bot, update *models
 		Text:   fmt.Sprintf("Il y a %d vote(s) pour la citation n° %d", len(quote.Votes), qid),
 	})
 
-	qb.Logger.Info.Println("Score envoyé à", update.Message.From.Username)
+	qb.Logger.Info.Printf("Score envoyé à %s", update.Message.From.Username)
 }
