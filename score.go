@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -19,7 +18,7 @@ func (qb *QuotoBot) scoreHandler(ctx context.Context, b *bot.Bot, update *models
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -29,17 +28,17 @@ func (qb *QuotoBot) scoreHandler(ctx context.Context, b *bot.Bot, update *models
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
 	var quote Quote
-	if err := qb.Database.Model(&Quote{}).Preload("Votes").Where("id = ?", qid).First(&quote).Error; err != nil {
+	if err := qb.Database.Preload("Votes").Where("id = ?", qid).First(&quote).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Citation introuvable",
 		})
-		log.Printf("Citation introuvable de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Citation introuvable pour %s", update.Message.From.Username)
 		return
 	}
 
@@ -48,5 +47,5 @@ func (qb *QuotoBot) scoreHandler(ctx context.Context, b *bot.Bot, update *models
 		Text:   fmt.Sprintf("Il y a %d vote(s) pour la citation n° %d", len(quote.Votes), qid),
 	})
 
-	log.Println("Score envoyé à", update.Message.From.Username)
+	qb.Logger.Info.Println("Score envoyé à", update.Message.From.Username)
 }

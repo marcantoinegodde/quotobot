@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
 	"strconv"
 	"strings"
 
@@ -20,7 +19,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -30,7 +29,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -40,13 +39,13 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 				ChatID: update.Message.Chat.ID,
 				Text:   "Citation introuvable",
 			})
-			log.Printf("Citation introuvable de %s", update.Message.From.Username)
+			qb.Logger.Info.Printf("Citation introuvable de %s", update.Message.From.Username)
 		} else {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
-				Text:   "Erreur de base de données",
+				Text:   "Erreur lors de la recherche de la citation",
 			})
-			log.Printf("Erreur de base de données : %v", err)
+			qb.Logger.Error.Printf("Erreur lors de la recherche de la citation: %v", err)
 		}
 		return
 	}
@@ -57,7 +56,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la suppression du vote",
 		})
-		log.Printf("Erreur lors de la suppression du vote de %s", update.Message.From.Username)
+		qb.Logger.Error.Printf("Erreur lors de la suppression du vote: %v", err)
 		return
 	}
 
@@ -66,7 +65,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 			ChatID: update.Message.Chat.ID,
 			Text:   "T'as pas encore voté pour cette citation crétin !",
 		})
-		log.Printf("Vote introuvable de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Vote introuvable de %s", update.Message.From.Username)
 		return
 	}
 
@@ -75,5 +74,5 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 		Text:   "J'ai supprimé ton vote",
 	})
 
-	log.Printf("Vote supprimé de %s", update.Message.From.Username)
+	qb.Logger.Info.Printf("Vote supprimé de %s pour la citation #%d", update.Message.From.Username, qid)
 }

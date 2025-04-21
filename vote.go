@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
 	"strconv"
 	"strings"
 
@@ -20,7 +19,7 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -30,7 +29,7 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -40,13 +39,13 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 				ChatID: update.Message.Chat.ID,
 				Text:   "Citation introuvable",
 			})
-			log.Printf("Citation introuvable de %s", update.Message.From.Username)
+			qb.Logger.Info.Printf("Citation introuvable de %s", update.Message.From.Username)
 		} else {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
-				Text:   "Erreur de base de données",
+				Text:   "Erreur lors de la recherche de la citation",
 			})
-			log.Printf("Erreur de base de données : %v", err)
+			qb.Logger.Error.Printf("Erreur lors de la recherche de la citation: %v", err)
 		}
 		return
 	}
@@ -62,13 +61,13 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 				ChatID: update.Message.Chat.ID,
 				Text:   "T'as déjà voté crétin !",
 			})
-			log.Printf("Vote déjà enregistré de %s", update.Message.From.Username)
+			qb.Logger.Info.Printf("Vote déjà enregistré de %s", update.Message.From.Username)
 		} else {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
-				Text:   "Erreur de base de données",
+				Text:   "Erreur lors de l'enregistrement du vote",
 			})
-			log.Printf("Erreur de base de données : %v", err)
+			qb.Logger.Error.Printf("Erreur lors de l'enregistrement du vote: %v", err)
 		}
 		return
 	}
@@ -78,5 +77,5 @@ func (qb *QuotoBot) voteHandler(ctx context.Context, b *bot.Bot, update *models.
 		Text:   "A voté !",
 	})
 
-	log.Printf("Vote enregistré de %s pour la citation %d", update.Message.From.Username, qid)
+	qb.Logger.Info.Printf("Vote enregistré de %s pour la citation #%d", update.Message.From.Username, qid)
 }

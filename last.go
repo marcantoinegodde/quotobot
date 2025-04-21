@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -22,7 +21,7 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 				ChatID: update.Message.Chat.ID,
 				Text:   "Mauvais format",
 			})
-			log.Printf("Mauvais format de %s", update.Message.From.Username)
+			qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 			return
 		}
 		n = num
@@ -39,7 +38,7 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la récupération des citations",
 		})
-		log.Printf("Erreur lors de la récupération des citations: %v", err)
+		qb.Logger.Error.Printf("Erreur lors de la récupération des citations: %v", err)
 		return
 	}
 
@@ -48,6 +47,7 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 			ChatID: update.Message.Chat.ID,
 			Text:   "Aucune citation trouvée",
 		})
+		qb.Logger.Info.Printf("Aucune citation trouvée pour %s\n", update.Message.From.Username)
 		return
 	}
 
@@ -67,5 +67,5 @@ func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.
 		ParseMode: models.ParseModeMarkdown,
 	})
 
-	log.Printf("%d quote(s) envoyée(s) à %s\n", len(quotes), update.Message.From.Username)
+	qb.Logger.Info.Printf("%d quote(s) envoyée(s) à %s\n", len(quotes), update.Message.From.Username)
 }

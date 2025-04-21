@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -20,18 +18,18 @@ type Vote struct {
 	QuoteID  uint  `gorm:"uniqueIndex:udx_person_quote,WHERE:deleted_at IS NULL"`
 }
 
-func loadDatabase() *gorm.DB {
+func loadDatabase(logger *Logger) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{TranslateError: true})
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		logger.Error.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	// Migrate the schema
 	if err := db.AutoMigrate(&Quote{}, &Vote{}); err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
+		logger.Error.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	log.Println("Database loaded successfully")
+	logger.Info.Println("Database loaded successfully")
 
 	return db
 }

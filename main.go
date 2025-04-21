@@ -13,15 +13,18 @@ import (
 type QuotoBot struct {
 	Config   *Config
 	Database *gorm.DB
+	Logger   *Logger
 }
 
 func NewQuotoBot() *QuotoBot {
-	c := loadConfig()
-	db := loadDatabase()
+	l := newLogger()
+	c := loadConfig(l)
+	db := loadDatabase(l)
 
 	return &QuotoBot{
 		Config:   c,
 		Database: db,
+		Logger:   l,
 	}
 }
 
@@ -48,6 +51,8 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeMessageText, "unvote", bot.MatchTypeCommandStartOnly, qb.unvoteHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "score", bot.MatchTypeCommandStartOnly, qb.scoreHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "top", bot.MatchTypeCommandStartOnly, qb.topHandler)
+
+	qb.Logger.Info.Println("QuotoBot started")
 
 	b.Start(ctx)
 }

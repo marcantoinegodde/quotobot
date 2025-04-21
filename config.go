@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 )
 
@@ -11,7 +9,7 @@ type Config struct {
 	ChatID int64  `mapstructure:"chat_id"`
 }
 
-func loadConfig() *Config {
+func loadConfig(logger *Logger) *Config {
 	var config Config
 
 	viper.SetConfigName("config")
@@ -20,11 +18,11 @@ func loadConfig() *Config {
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalln("Fatal error reading config file:", err)
+		logger.Error.Fatalln("Fatal error reading config file:", err)
 	}
 
 	if err := viper.Unmarshal(&config); err != nil {
-		log.Fatalln("Fatal error unmarshal config:", err)
+		logger.Error.Fatalln("Fatal error unmarshal config:", err)
 	}
 
 	return &config

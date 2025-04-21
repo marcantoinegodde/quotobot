@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/go-telegram/bot"
@@ -26,7 +25,7 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -38,7 +37,7 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 			ChatID: update.Message.Chat.ID,
 			Text:   "Mauvais format",
 		})
-		log.Printf("Mauvais format de %s", update.Message.From.Username)
+		qb.Logger.Info.Printf("Mauvais format de %s", update.Message.From.Username)
 		return
 	}
 
@@ -51,7 +50,7 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de l'ajout de la citation",
 		})
-		log.Printf("Erreur lors de l'ajout de la citation: %v", err)
+		qb.Logger.Error.Printf("Erreur lors de l'ajout de la citation: %v", err)
 		return
 	}
 
@@ -61,5 +60,5 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 		ParseMode: models.ParseModeMarkdown,
 	})
 
-	log.Println("Quote ajoutée par", update.Message.From.Username)
+	qb.Logger.Info.Printf("Quote #%d ajoutée par %s", quote.ID, update.Message.From.Username)
 }
