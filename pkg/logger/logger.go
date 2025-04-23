@@ -1,4 +1,4 @@
-package main
+package logger
 
 import (
 	"log"
@@ -10,7 +10,7 @@ type Logger struct {
 	Error *log.Logger
 }
 
-func newLogger() *Logger {
+func NewLogger() *Logger {
 	return &Logger{
 		Info:  infoLog(),
 		Error: errorLog(),

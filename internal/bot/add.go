@@ -1,8 +1,9 @@
-package main
+package bot
 
 import (
 	"context"
 	"fmt"
+	"quotobot/pkg/database"
 	"strings"
 
 	"github.com/go-telegram/bot"
@@ -10,7 +11,7 @@ import (
 )
 
 func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	if update.Message.Chat.ID == qb.Config.ChatID {
+	if update.Message.Chat.ID == qb.Config.Bot.ChatID {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Arrête de faire chier les autres et viens me voir en privé",
@@ -41,7 +42,7 @@ func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.U
 		return
 	}
 
-	quote := Quote{
+	quote := database.Quote{
 		Content: content,
 		Author:  author,
 	}

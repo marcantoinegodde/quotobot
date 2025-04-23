@@ -1,6 +1,8 @@
-package main
+package database
 
 import (
+	"quotobot/pkg/logger"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -18,7 +20,7 @@ type Vote struct {
 	QuoteID  uint  `gorm:"uniqueIndex:udx_person_quote,WHERE:deleted_at IS NULL"`
 }
 
-func loadDatabase(logger *Logger) *gorm.DB {
+func LoadDatabase(logger *logger.Logger) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{TranslateError: true})
 	if err != nil {
 		logger.Error.Fatalf("Failed to connect to database: %v", err)

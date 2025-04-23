@@ -1,8 +1,9 @@
-package main
+package bot
 
 import (
 	"context"
 	"fmt"
+	"quotobot/pkg/database"
 	"strconv"
 	"strings"
 
@@ -32,7 +33,7 @@ func (qb *QuotoBot) scoreHandler(ctx context.Context, b *bot.Bot, update *models
 		return
 	}
 
-	var quote Quote
+	var quote database.Quote
 	if err := qb.Database.Preload("Votes").Where("id = ?", qid).First(&quote).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,

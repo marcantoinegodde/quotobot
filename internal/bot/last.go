@@ -1,8 +1,9 @@
-package main
+package bot
 
 import (
 	"context"
 	"fmt"
+	"quotobot/pkg/database"
 	"strconv"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
-func (qb *QuotoBot) topHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func (qb *QuotoBot) lastHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	command := strings.Split(update.Message.Text, " ")
 	n := 1
 
@@ -32,14 +33,8 @@ func (qb *QuotoBot) topHandler(ctx context.Context, b *bot.Bot, update *models.U
 		n = maxQuotes
 	}
 
-	var quotes []Quote
-	if err := qb.Database.Model(&Vote{}).Preload("Votes").
-		Select("quotes.content, quotes.author, quotes.id, COUNT(votes.person_id) AS votes").
-		Joins("JOIN quotes ON quotes.id = votes.quote_id").
-		Group("quotes.id").
-		Order("votes DESC").
-		Limit(n).
-		Find(&quotes).Error; err != nil {
+	var quotes []database.Quote
+	if err := qb.Database.Model(&database.Quote{}).Preload("Votes").Order("id desc").Limit(n).Find(&quotes).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la récupération des citations",
@@ -53,6 +48,7 @@ func (qb *QuotoBot) topHandler(ctx context.Context, b *bot.Bot, update *models.U
 			ChatID: update.Message.Chat.ID,
 			Text:   "Aucune citation trouvée",
 		})
+		qb.Logger.Info.Printf("Aucune citation trouvée pour %s", update.Message.From.Username)
 		return
 	}
 

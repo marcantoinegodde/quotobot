@@ -1,9 +1,12 @@
-package main
+package bot
 
 import (
 	"context"
 	"os"
 	"os/signal"
+	"quotobot/pkg/config"
+	"quotobot/pkg/database"
+	"quotobot/pkg/logger"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -11,15 +14,15 @@ import (
 )
 
 type QuotoBot struct {
-	Config   *Config
+	Config   *config.Config
 	Database *gorm.DB
-	Logger   *Logger
+	Logger   *logger.Logger
 }
 
 func NewQuotoBot() *QuotoBot {
-	l := newLogger()
-	c := loadConfig(l)
-	db := loadDatabase(l)
+	l := logger.NewLogger()
+	c := config.LoadConfig(l)
+	db := database.LoadDatabase(l)
 
 	return &QuotoBot{
 		Config:   c,
@@ -28,17 +31,15 @@ func NewQuotoBot() *QuotoBot {
 	}
 }
 
-func main() {
+func (qb *QuotoBot) Start() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
-
-	qb := NewQuotoBot()
 
 	opts := []bot.Option{
 		bot.WithDefaultHandler(qb.defaultHandler),
 	}
 
-	b, err := bot.New(qb.Config.Token, opts...)
+	b, err := bot.New(qb.Config.Bot.Token, opts...)
 	if err != nil {
 		panic(err)
 	}

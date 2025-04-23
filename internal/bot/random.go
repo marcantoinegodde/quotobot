@@ -1,8 +1,9 @@
-package main
+package bot
 
 import (
 	"context"
 	"fmt"
+	"quotobot/pkg/database"
 	"strconv"
 	"strings"
 
@@ -32,8 +33,8 @@ func (qb *QuotoBot) randomHandler(ctx context.Context, b *bot.Bot, update *model
 		n = maxQuotes
 	}
 
-	var quotes []Quote
-	if err := qb.Database.Model(&Quote{}).Preload("Votes").Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
+	var quotes []database.Quote
+	if err := qb.Database.Model(&database.Quote{}).Preload("Votes").Order("RANDOM()").Limit(n).Find(&quotes).Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Erreur lors de la récupération des citations",

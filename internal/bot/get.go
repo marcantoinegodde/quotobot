@@ -1,9 +1,10 @@
-package main
+package bot
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"quotobot/pkg/database"
 	"strconv"
 	"strings"
 
@@ -34,7 +35,7 @@ func (qb *QuotoBot) getHandler(ctx context.Context, b *bot.Bot, update *models.U
 		return
 	}
 
-	var quote Quote
+	var quote database.Quote
 	if err := qb.Database.Preload("Votes").Where("id = ?", qid).First(&quote).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			b.SendMessage(ctx, &bot.SendMessageParams{

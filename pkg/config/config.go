@@ -1,15 +1,30 @@
-package main
+package config
 
 import (
+	"quotobot/pkg/logger"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
+	Bot    Bot    `mapstructure:"bot"`
+	Server Server `mapstructure:"server"`
+}
+
+type Bot struct {
 	Token  string `mapstructure:"token"`
 	ChatID int64  `mapstructure:"chat_id"`
 }
 
-func loadConfig(logger *Logger) *Config {
+type Server struct {
+	SessionSecret string `mapstructure:"session_secret"`
+	ProviderURL   string `mapstructure:"provider_url"`
+	ClientID      string `mapstructure:"client_id"`
+	ClientSecret  string `mapstructure:"client_secret"`
+	RedirectURL   string `mapstructure:"redirect_url"`
+}
+
+func LoadConfig(logger *logger.Logger) *Config {
 	var config Config
 
 	viper.SetConfigName("config")

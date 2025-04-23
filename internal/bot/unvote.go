@@ -1,8 +1,9 @@
-package main
+package bot
 
 import (
 	"context"
 	"errors"
+	"quotobot/pkg/database"
 	"strconv"
 	"strings"
 
@@ -33,7 +34,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 		return
 	}
 
-	if err := qb.Database.Where("id = ?", qid).First(&Quote{}).Error; err != nil {
+	if err := qb.Database.Where("id = ?", qid).First(&database.Quote{}).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
@@ -50,7 +51,7 @@ func (qb *QuotoBot) unvoteHandler(ctx context.Context, b *bot.Bot, update *model
 		return
 	}
 
-	query := qb.Database.Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Delete(&Vote{})
+	query := qb.Database.Where("person_id = ? AND quote_id = ?", update.Message.From.ID, qid).Delete(&database.Vote{})
 	if err := query.Error; err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
