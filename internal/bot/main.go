@@ -14,9 +14,9 @@ import (
 )
 
 type QuotoBot struct {
+	Logger   *logger.Logger
 	Config   *config.Config
 	Database *gorm.DB
-	Logger   *logger.Logger
 }
 
 func NewQuotoBot() *QuotoBot {
@@ -25,9 +25,9 @@ func NewQuotoBot() *QuotoBot {
 	db := database.LoadDatabase(l)
 
 	return &QuotoBot{
+		Logger:   l,
 		Config:   c,
 		Database: db,
-		Logger:   l,
 	}
 }
 
