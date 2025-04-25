@@ -6,6 +6,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/go-telegram/bot v1.14.2
 	github.com/gorilla/sessions v1.4.0
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	golang.org/x/oauth2 v0.28.0
 	gorm.io/driver/sqlite v1.5.7
@@ -17,6 +18,7 @@ require (
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28 // indirect
