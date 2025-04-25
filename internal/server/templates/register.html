@@ -87,6 +87,9 @@
       <p>Tu es déjà enregistré sur le QuotoBot, {{ .FirstName }}.</p>
       {{ else if eq .Status "success" }}
       <p>Tu es maintenant enregistré sur le QuotoBot, {{ .FirstName }} !</p>
+      {{ else if eq .Status "error" }}
+      <h1>Erreur</h1>
+      <p>L'URL n'est pas valide.</p>
       {{ end }}
     </div>
   </body>

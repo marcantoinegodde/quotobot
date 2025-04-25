@@ -18,6 +18,7 @@ type Bot struct {
 
 type Server struct {
 	SessionSecret string `mapstructure:"session_secret"`
+	HMACSecret    string `mapstructure:"hmac_secret"`
 	ProviderURL   string `mapstructure:"provider_url"`
 	ClientID      string `mapstructure:"client_id"`
 	ClientSecret  string `mapstructure:"client_secret"`

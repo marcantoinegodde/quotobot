@@ -174,12 +174,13 @@ func (s *Server) CallbackHandler(ctx context.Context, store *sessions.CookieStor
 
 func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		username := r.URL.Query().Get("username")
-		id := r.URL.Query().Get("id")
-		if id == "" {
-			http.Error(w, "missing telegram_id", http.StatusBadRequest) // TODO: handle this better
+		if ok := validateURL(r.URL.Query(), s.Config.Server.HMACSecret); !ok {
+			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "error"})
 			return
 		}
+
+		username := r.URL.Query().Get("username")
+		id := r.URL.Query().Get("id")
 
 		session, _ := store.Get(r, "session")
 
