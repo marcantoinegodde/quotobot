@@ -44,6 +44,7 @@ func (qb *QuotoBot) Start() {
 		panic(err)
 	}
 
+	b.RegisterHandler(bot.HandlerTypeMessageText, "register", bot.MatchTypeCommandStartOnly, qb.registerHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "add", bot.MatchTypeCommandStartOnly, qb.addHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "last", bot.MatchTypeCommandStartOnly, qb.lastHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "random", bot.MatchTypeCommandStartOnly, qb.randomHandler)

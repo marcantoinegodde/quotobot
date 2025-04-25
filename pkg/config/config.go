@@ -12,8 +12,10 @@ type Config struct {
 }
 
 type Bot struct {
-	Token  string `mapstructure:"token"`
-	ChatID int64  `mapstructure:"chat_id"`
+	Token      string `mapstructure:"token"`
+	ChatID     int64  `mapstructure:"chat_id"`
+	BaseURL    string `mapstructure:"base_url"`
+	HMACSecret string `mapstructure:"hmac_secret"`
 }
 
 type Server struct {
