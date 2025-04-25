@@ -1,2 +1,13 @@
-token: token
-chat_id: 123456789
+bot:
+  token: token
+  chat_id: -1002698056536
+  base_url: quotobot.cs-campus.fr
+  hmac_secret: quotobot
+
+server:
+  session_secret: quotobot
+  hmac_secret: quotobot
+  provider_url: https://moncompte.viarezo.fr
+  client_id: client_id
+  client_secret: client_secret
+  redirect_url: https://quotobot.cs-campus.fr/oauth/callback
