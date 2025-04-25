@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"embed"
 	"fmt"
 	"net/http"
 	"quotobot/pkg/config"
@@ -13,6 +14,9 @@ import (
 	"golang.org/x/oauth2"
 	"gorm.io/gorm"
 )
+
+//go:embed templates/*.html
+var templates embed.FS
 
 type Server struct {
 	Logger   *logger.Logger
@@ -172,13 +176,13 @@ func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 
 		authenticated, ok := session.Values["authenticated"].(bool)
 		if !ok || !authenticated {
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			s.renderTemplate(w, []string{"templates/register.html"}, nil)
 			return
 		}
 
 		user, ok := session.Values["user"].(User)
 		if !ok {
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			s.renderTemplate(w, []string{"templates/register.html"}, nil)
 			return
 		}
 

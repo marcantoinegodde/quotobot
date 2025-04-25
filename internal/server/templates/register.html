@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuotoBot</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+      }
+
+      .container {
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        max-width: 400px;
+        width: 90%;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        color: #333333;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1rem;
+        color: #555555;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.2rem;
+        background-color: #ffffff;
+        color: #222;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #e6e6e6;
+        opacity: 0.9;
+      }
+
+      .btn img {
+        height: 24px;
+        width: 24px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bonjour John</h1>
+      <p>
+        Pour t'enregistrer sur le QuotoBot, connecte toi avec ton compte
+        ViaRézo.
+      </p>
+      <a href="/oauth/authorize" class="btn">
+        <img
+          src="http://cdn-pop.viarezo.fr/static/logos_VR/VR_64x64.png"
+          alt="ViaRézo Logo"
+        />
+        Se Connecter avec ViaRézo
+      </a>
+    </div>
+  </body>
+</html>
