@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"embed"
-	"fmt"
+	"errors"
 	"net/http"
 	"quotobot/pkg/config"
 	"quotobot/pkg/database"
@@ -172,20 +172,43 @@ func (s *Server) CallbackHandler(ctx context.Context, store *sessions.CookieStor
 
 func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		telegramID := r.URL.Query().Get("telegram_id")
+		if telegramID == "" {
+			http.Error(w, "missing telegram_id", http.StatusBadRequest) // TODO: handle this better
+			return
+		}
+
 		session, _ := store.Get(r, "session")
 
 		authenticated, ok := session.Values["authenticated"].(bool)
 		if !ok || !authenticated {
-			s.renderTemplate(w, []string{"templates/register.html"}, nil)
+			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "unauthenticated"})
 			return
 		}
 
 		user, ok := session.Values["user"].(User)
 		if !ok {
-			s.renderTemplate(w, []string{"templates/register.html"}, nil)
+			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "unauthenticated"})
 			return
 		}
 
-		fmt.Fprintf(w, "Welcome %s - %s.", user.Name, user.ID)
+		u := database.User{
+			TelegramID: telegramID,
+			ViaRezoID:  user.ID,
+		}
+
+		if err := s.Database.Create(&u).Error; err != nil {
+			if errors.Is(err, gorm.ErrDuplicatedKey) {
+				s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "already_registered"})
+				return
+			} else {
+				s.Logger.Error.Printf("Failed to create user in database: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		s.Logger.Info.Printf("User registered: %s - %s", u.ViaRezoID, u.TelegramID)
+		s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "success"})
 	}
 }

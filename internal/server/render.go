@@ -5,6 +5,10 @@ import (
 	"text/template"
 )
 
+type RegisterTemplateData struct {
+	Status string
+}
+
 func (s *Server) renderTemplate(w http.ResponseWriter, filenames []string, data any) {
 	t, err := template.ParseFS(templates, filenames...)
 	if err != nil {
