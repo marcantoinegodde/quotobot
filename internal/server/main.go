@@ -68,6 +68,8 @@ func (s *Server) Start() {
 	http.HandleFunc("/oauth/callback", s.CallbackHandler(ctx, store, oauth2Config, verifier))
 	http.HandleFunc("/register", s.RegisterHandler(store))
 
+	s.Logger.Info.Println("Server listening on :8080")
+
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -172,8 +174,9 @@ func (s *Server) CallbackHandler(ctx context.Context, store *sessions.CookieStor
 
 func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		telegramID := r.URL.Query().Get("telegram_id")
-		if telegramID == "" {
+		username := r.URL.Query().Get("username")
+		id := r.URL.Query().Get("id")
+		if id == "" {
 			http.Error(w, "missing telegram_id", http.StatusBadRequest) // TODO: handle this better
 			return
 		}
@@ -182,24 +185,24 @@ func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 
 		authenticated, ok := session.Values["authenticated"].(bool)
 		if !ok || !authenticated {
-			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "unauthenticated"})
+			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Username: username, Status: "unauthenticated"})
 			return
 		}
 
 		user, ok := session.Values["user"].(User)
 		if !ok {
-			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "unauthenticated"})
+			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Username: username, Status: "unauthenticated"})
 			return
 		}
 
 		u := database.User{
-			TelegramID: telegramID,
+			TelegramID: id,
 			ViaRezoID:  user.ID,
 		}
 
 		if err := s.Database.Create(&u).Error; err != nil {
 			if errors.Is(err, gorm.ErrDuplicatedKey) {
-				s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "already_registered"})
+				s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{FirstName: user.FirstName, Status: "already_registered"})
 				return
 			} else {
 				s.Logger.Error.Printf("Failed to create user in database: %v", err)
@@ -209,6 +212,6 @@ func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 		}
 
 		s.Logger.Info.Printf("User registered: %s - %s", u.ViaRezoID, u.TelegramID)
-		s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Status: "success"})
+		s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{FirstName: user.FirstName, Status: "success"})
 	}
 }

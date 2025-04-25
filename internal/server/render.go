@@ -6,7 +6,9 @@ import (
 )
 
 type RegisterTemplateData struct {
-	Status string
+	Username  string
+	FirstName string
+	Status    string
 }
 
 func (s *Server) renderTemplate(w http.ResponseWriter, filenames []string, data any) {

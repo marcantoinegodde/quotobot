@@ -67,23 +67,26 @@
   </head>
   <body>
     <div class="container">
-      {{ if eq .Status "unauthenticated" }}
-      <h1>Bonjour John</h1>
+      {{ if eq .Status "unauthenticated" }} {{ if .Username }}
+      <h1>Bonjour {{ .Username }}</h1>
+      {{ else }}
+      <h1>Bonjour</h1>
+      {{ end }}
       <p>
         Pour t'enregistrer sur le QuotoBot, connecte toi avec ton compte
         ViaRézo.
       </p>
       <a href="/oauth/authorize" class="btn">
         <img
-          src="http://cdn-pop.viarezo.fr/static/logos_VR/VR_64x64.png"
+          src="https://cdn-pop.viarezo.fr/static/logos_VR/VR_64x64.png"
           alt="ViaRézo Logo"
         />
         Se Connecter avec ViaRézo
       </a>
       {{ else if eq .Status "already_registered" }}
-      <p>Tu es déjà enregistré sur le QuotoBot.</p>
+      <p>Tu es déjà enregistré sur le QuotoBot, {{ .FirstName }}.</p>
       {{ else if eq .Status "success" }}
-      <p>Tu es maintenant enregistré sur le QuotoBot !</p>
+      <p>Tu es maintenant enregistré sur le QuotoBot, {{ .FirstName }} !</p>
       {{ end }}
     </div>
   </body>
