@@ -1,8 +1,8 @@
 package server
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 )
 
 type RegisterTemplateData struct {
