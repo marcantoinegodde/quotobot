@@ -167,8 +167,8 @@ func (s *Server) CallbackHandler(ctx context.Context, store *sessions.CookieStor
 			return
 		}
 
-		// Redirect to the register page
-		http.Redirect(w, r, "/register", http.StatusFound)
+		redirect := session.Values["redirect"].(string)
+		http.Redirect(w, r, redirect, http.StatusFound)
 	}
 }
 
@@ -186,12 +186,28 @@ func (s *Server) RegisterHandler(store *sessions.CookieStore) http.HandlerFunc {
 
 		authenticated, ok := session.Values["authenticated"].(bool)
 		if !ok || !authenticated {
+			session.Values["redirect"] = r.URL.RequestURI()
+
+			if err := session.Save(r, w); err != nil {
+				s.Logger.Error.Printf("Failed to save session: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+
 			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Username: username, Status: "unauthenticated"})
 			return
 		}
 
 		user, ok := session.Values["user"].(User)
 		if !ok {
+			session.Values["redirect"] = r.URL.RequestURI()
+
+			if err := session.Save(r, w); err != nil {
+				s.Logger.Error.Printf("Failed to save session: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+
 			s.renderTemplate(w, []string{"templates/register.html"}, RegisterTemplateData{Username: username, Status: "unauthenticated"})
 			return
 		}
