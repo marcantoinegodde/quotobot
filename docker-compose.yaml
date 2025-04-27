@@ -1,0 +1,19 @@
+services:
+  bot:
+    build: .
+    restart: always
+    command: ["bot"]
+    volumes:
+      - ./config.yaml:/etc/quotobot/config.yaml
+      - ./data:/data
+
+  server:
+    build: .
+    restart: always
+    command: ["server"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.yaml:/etc/quotobot/config.yaml
+      - ./data:/data
+

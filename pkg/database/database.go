@@ -27,7 +27,7 @@ type User struct {
 }
 
 func LoadDatabase(logger *logger.Logger) *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("quotobot.db"), &gorm.Config{TranslateError: true})
+	db, err := gorm.Open(sqlite.Open("/data/quotobot.db"), &gorm.Config{TranslateError: true})
 	if err != nil {
 		logger.Error.Fatalf("Failed to connect to database: %v", err)
 	}
