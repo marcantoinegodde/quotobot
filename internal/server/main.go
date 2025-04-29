@@ -16,7 +16,10 @@ import (
 )
 
 //go:embed templates/*.html
-var templates embed.FS
+var templatesFs embed.FS
+
+//go:embed public
+var publicFs embed.FS
 
 type Server struct {
 	Logger   *logger.Logger
@@ -64,6 +67,7 @@ func (s *Server) Start() {
 
 	verifier := provider.Verifier(&oidc.Config{ClientID: s.Config.Server.ClientID})
 
+	http.HandleFunc("/favicon.ico", s.FaviconHandler)
 	http.HandleFunc("/oauth/authorize", s.AuthorizeHandler(store, oauth2Config))
 	http.HandleFunc("/oauth/callback", s.CallbackHandler(ctx, store, oauth2Config, verifier))
 	http.HandleFunc("/register", s.RegisterHandler(store))
@@ -71,6 +75,10 @@ func (s *Server) Start() {
 	s.Logger.Info.Println("Server listening on :8080")
 
 	http.ListenAndServe(":8080", nil)
+}
+
+func (s *Server) FaviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFileFS(w, r, publicFs, "public/favicon.ico")
 }
 
 func (s *Server) AuthorizeHandler(store *sessions.CookieStore, oauth2Config *oauth2.Config) http.HandlerFunc {

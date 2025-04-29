@@ -12,7 +12,7 @@ type RegisterTemplateData struct {
 }
 
 func (s *Server) renderTemplate(w http.ResponseWriter, filenames []string, data any) {
-	t, err := template.ParseFS(templates, filenames...)
+	t, err := template.ParseFS(templatesFs, filenames...)
 	if err != nil {
 		s.Logger.Error.Printf("Failed to parse templates %v: %v", filenames, err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
