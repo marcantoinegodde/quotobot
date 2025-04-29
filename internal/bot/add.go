@@ -11,7 +11,7 @@ import (
 )
 
 func (qb *QuotoBot) addHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	if update.Message.Chat.ID == qb.Config.Bot.ChatID {
+	if update.Message.Chat.Type != models.ChatTypePrivate {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Arrête de faire chier les autres et viens me voir en privé",
