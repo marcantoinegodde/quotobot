@@ -84,8 +84,22 @@ func (qb *QuotoBot) defaultHandler(ctx context.Context, b *bot.Bot, update *mode
 		return
 	}
 
+	// Ignore non-command updates
+	if !IsCommand(update.Message) {
+		return
+	}
+
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
 		Text:   "Commande inconnue",
 	})
+}
+
+func IsCommand(m *models.Message) bool {
+	if len(m.Entities) == 0 {
+		return false
+	}
+
+	entity := m.Entities[0]
+	return entity.Offset == 0 && entity.Type == models.MessageEntityTypeBotCommand
 }
