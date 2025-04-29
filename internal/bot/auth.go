@@ -10,8 +10,16 @@ import (
 
 func (qb *QuotoBot) requireAuth(next bot.HandlerFunc) bot.HandlerFunc {
 	return func(ctx context.Context, b *bot.Bot, update *models.Update) {
-		if update.Message.Chat.ID == qb.Config.Bot.ChatID {
-			next(ctx, b, update)
+		if update.Message.Chat.Type != models.ChatTypePrivate {
+			if update.Message.Chat.ID == qb.Config.Bot.ChatID {
+				next(ctx, b, update)
+				return
+			}
+
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Non autorisé",
+			})
 			return
 		}
 
