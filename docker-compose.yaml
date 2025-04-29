@@ -1,27 +1,27 @@
 services:
   traefik:
-    image: "traefik:v3.3"
-    container_name: "traefik"
+    image: traefik:v3.3
+    container_name: traefik
     command:
-      #- "--log.level=DEBUG"
-      # - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entryPoints.web.address=:80"
-      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entryPoints.websecure.address=:443"
-      - "--certificatesresolvers.resolver.acme.tlschallenge=true"
-      #- "--certificatesresolvers.resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.resolver.acme.email=marc-antoine.godde@viarezo.fr"
-      - "--certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json"
+      # - --log.level=DEBUG
+      # - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entryPoints.web.address=:80
+      - --entryPoints.web.http.redirections.entryPoint.to=websecure
+      - --entryPoints.web.http.redirections.entryPoint.scheme=https
+      - --entryPoints.websecure.address=:443
+      - --certificatesresolvers.resolver.acme.tlschallenge=true
+      # - --certificatesresolvers.resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.resolver.acme.email=marc-antoine.godde@viarezo.fr
+      - --certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json
     ports:
-      - "80:80"
-      - "443:443"
-      # - "8080:8080"
+      - 80:80
+      - 443:443
+      # - 8080:8080
     volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   bot:
     build: .
@@ -39,7 +39,7 @@ services:
       - ./config.yaml:/etc/quotobot/config.yaml
       - ./data:/data
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.server.rule=Host(`quotobot.cs-campus.fr`)"
-      - "traefik.http.routers.server.entrypoints=websecure"
-      - "traefik.http.routers.server.tls.certresolver=resolver"
+      - traefik.enable=true
+      - traefik.http.routers.server.rule=Host(`quotobot.cs-campus.fr`)
+      - traefik.http.routers.server.entrypoints=websecure
+      - traefik.http.routers.server.tls.certresolver=resolver
