@@ -68,6 +68,7 @@ func (s *Server) Start() {
 	verifier := provider.Verifier(&oidc.Config{ClientID: s.Config.Server.ClientID})
 
 	http.HandleFunc("/favicon.ico", s.FaviconHandler)
+	http.HandleFunc("/healthz", s.HealthzHandler)
 	http.HandleFunc("/oauth/authorize", s.AuthorizeHandler(store, oauth2Config))
 	http.HandleFunc("/oauth/callback", s.CallbackHandler(ctx, store, oauth2Config, verifier))
 	http.HandleFunc("/register", s.RegisterHandler(store))
@@ -79,6 +80,12 @@ func (s *Server) Start() {
 
 func (s *Server) FaviconHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFileFS(w, r, publicFs, "public/favicon.ico")
+}
+
+func (s *Server) HealthzHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"ok"}`))
 }
 
 func (s *Server) AuthorizeHandler(store *sessions.CookieStore, oauth2Config *oauth2.Config) http.HandlerFunc {
