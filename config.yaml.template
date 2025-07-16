@@ -5,6 +5,7 @@ bot:
   hmac_secret: quotobot
 
 server:
+  env: prod
   session_secret: quotobot
   hmac_secret: quotobot
   provider_url: https://moncompte.viarezo.fr

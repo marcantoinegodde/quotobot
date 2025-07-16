@@ -42,11 +42,13 @@ func NewServer() *Server {
 func (s *Server) Start() {
 	ctx := context.Background()
 
+	secure := s.Config.Server.Env != "dev"
+
 	store := sessions.NewCookieStore([]byte(s.Config.Server.SessionSecret))
 	store.Options = &sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   false, // TODO: set to true in production
+		Secure:   secure,
 		MaxAge:   3600,
 	}
 

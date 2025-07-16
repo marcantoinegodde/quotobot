@@ -57,6 +57,7 @@ bot:
   hmac_secret: your_hmac_secret_key
 
 server:
+  env: dev|prod
   session_secret: your_session_secret
   hmac_secret: your_hmac_secret_key
   provider_url: https://moncompte.viarezo.fr

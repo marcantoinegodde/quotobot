@@ -19,6 +19,7 @@ type Bot struct {
 }
 
 type Server struct {
+	Env           string `mapstructure:"env"`
 	SessionSecret string `mapstructure:"session_secret"`
 	HMACSecret    string `mapstructure:"hmac_secret"`
 	ProviderURL   string `mapstructure:"provider_url"`
