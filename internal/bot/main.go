@@ -85,7 +85,7 @@ func (qb *QuotoBot) defaultHandler(ctx context.Context, b *bot.Bot, update *mode
 	}
 
 	// Ignore non-command updates
-	if !IsCommand(update.Message) {
+	if !isCommand(update.Message) {
 		return
 	}
 
@@ -95,7 +95,7 @@ func (qb *QuotoBot) defaultHandler(ctx context.Context, b *bot.Bot, update *mode
 	})
 }
 
-func IsCommand(m *models.Message) bool {
+func isCommand(m *models.Message) bool {
 	if len(m.Entities) == 0 {
 		return false
 	}
