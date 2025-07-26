@@ -44,3 +44,12 @@ services:
       - traefik.http.routers.server.rule=Host(`quotobot.cs-campus.fr`)
       - traefik.http.routers.server.entrypoints=websecure
       - traefik.http.routers.server.tls.certresolver=resolver
+
+  backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    restart: always
+    volumes:
+      - ./config.yaml:/etc/quotobot/config.yaml
+      - ./data:/data

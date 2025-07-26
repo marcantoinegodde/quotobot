@@ -1,0 +1,31 @@
+FROM golang:1.24-alpine AS builder
+
+RUN mkdir /data && \
+    chown -R 65532:65532 /data
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY internal/ internal/
+COPY pkg/ pkg/
+
+RUN go build -ldflags="-s -w" -o /backup internal/backup/*.go
+
+
+FROM scratch
+
+ENV USER=backup
+ENV GROUP=backup
+
+WORKDIR /
+
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /data /data
+
+COPY --from=builder /backup /backup
+
+USER 65532:65532
+
+ENTRYPOINT ["/backup"]
