@@ -17,7 +17,7 @@ require (
 
 require (
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
-	github.com/cloudflare/circl v1.6.0 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
