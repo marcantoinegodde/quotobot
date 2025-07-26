@@ -12,3 +12,9 @@ server:
   client_id: client_id
   client_secret: client_secret
   redirect_url: https://quotobot.cs-campus.fr/oauth/callback
+
+backup:
+  token: token
+  chat_id: -1002531641383
+  encryption_passphrase: quotobot
+  cron: "@weekly"

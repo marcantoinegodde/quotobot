@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Bot    Bot    `mapstructure:"bot"`
 	Server Server `mapstructure:"server"`
+	Backup Backup `mapstructure:"backup"`
 }
 
 type Bot struct {
@@ -26,6 +27,13 @@ type Server struct {
 	ClientID      string `mapstructure:"client_id"`
 	ClientSecret  string `mapstructure:"client_secret"`
 	RedirectURL   string `mapstructure:"redirect_url"`
+}
+
+type Backup struct {
+	Token                string `mapstructure:"token"`
+	ChatID               int64  `mapstructure:"chat_id"`
+	EncryptionPassphrase string `mapstructure:"encryption_passphrase"`
+	Cron                 string `mapstructure:"cron"`
 }
 
 func LoadConfig(logger *logger.Logger) *Config {
