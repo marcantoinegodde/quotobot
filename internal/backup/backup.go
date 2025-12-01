@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"fmt"
 	"os"
 	"time"
@@ -26,6 +27,9 @@ func (bak *Backup) performBackup(ctx context.Context) {
 		bak.Logger.Error.Printf("Read file failed: %v\n", err)
 		return
 	}
+
+	md5Sum := md5.Sum(fileData)
+	bak.Logger.Info.Printf("Read backup file, size: %d bytes, MD5: %x\n", len(fileData), md5Sum)
 
 	password := []byte(bak.Config.Backup.EncryptionPassphrase)
 
@@ -55,7 +59,7 @@ func (bak *Backup) performBackup(ctx context.Context) {
 			Filename: fmt.Sprintf("quotobot-backup-%s.db.pgp", time.Now().Format("20060102")),
 			Data:     bytes.NewReader(armored),
 		},
-		Caption: fmt.Sprintf("Backup of %s", time.Now().Format(time.DateOnly)),
+		Caption: fmt.Sprintf("Date: %s\nMD5: %x", time.Now().Format(time.DateOnly), md5Sum),
 	})
 	if err != nil {
 		bak.Logger.Error.Printf("Failed to send backup: %v\n", err)
