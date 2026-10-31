@@ -40,7 +40,7 @@ quotobot/
 
 ### Prerequisites
 
-- Go 1.25+
+- Go 1.27+
 - SQLite
 - A registered Telegram bot token (from @BotFather)
 - OAuth credentials from ViaRézo

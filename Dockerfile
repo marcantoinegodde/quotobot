@@ -1,6 +1,4 @@
-FROM golang:1.26-alpine AS builder
-
-ENV CGO_ENABLED=1
+FROM golang:1.27-alpine AS builder
 
 RUN apk add --no-cache \
     # Important: required for go-sqlite3
@@ -21,7 +19,11 @@ COPY cmd/ cmd/
 COPY internal/ internal/
 COPY pkg/ pkg/
 
-RUN go build -ldflags='-s -w -extldflags "-static"' -o /quotobot main.go
+RUN CGO_ENABLED=1 go build \
+    -trimpath \
+    -ldflags="-s -w -extldflags '-static'" \
+    -o /quotobot \
+    main.go
 
 
 FROM scratch
